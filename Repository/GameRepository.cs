@@ -25,7 +25,6 @@ namespace Repository
         {
             return await _context.GameCategories.ToListAsync();
         }
-
         public async Task<List<Game>> SearchAsync(string search1, string search2)
         {
             var query = _context.Games.OrderByDescending(g => g.GameId).Include(g => g.Category).AsQueryable();
@@ -40,7 +39,6 @@ namespace Repository
                 query = query.Where(g => g.Price.ToString().ToLower().Contains(search1.ToLower()));
             }
             return await query.ToListAsync();
-
         }
         public async Task RemoveGameAsync(Game g)
         {

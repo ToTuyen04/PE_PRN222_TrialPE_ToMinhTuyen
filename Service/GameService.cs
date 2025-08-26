@@ -19,6 +19,7 @@ namespace Service
         {
             return await _repository.GetDevelopersAsync();
         }
+
         public async Task<List<Game>> SearchAsync(string search1, string search2)
         {
             return await _repository.SearchAsync(search1, search2);
