@@ -47,9 +47,9 @@ namespace GameManagement
 
             app.MapGet("/", () => Results.Redirect("/Login"));
             app.MapRazorPages().RequireAuthorization();
-            //app.MapRazorPages();
+            app.MapRazorPages();
 
-            //app.MapHub<SignalHub>("/lionHub");
+            app.MapHub<SignalHub>("/signalrhub");
 
             app.Run();
         }
