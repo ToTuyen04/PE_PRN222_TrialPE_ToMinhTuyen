@@ -46,7 +46,7 @@ namespace GameManagement.Pages
                 TempData["Message"] = "Invalid email or password";
             }
 
-            HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return Page();
         }
     }

@@ -6,22 +6,23 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Repository.Models;
+using Service;
 
 namespace GameManagement.Pages.Games
 {
     public class CreateModel : PageModel
     {
-        private readonly Repository.Models.GameHubContext _context;
+        private readonly GameService _service;
 
-        public CreateModel(Repository.Models.GameHubContext context)
+        public CreateModel(GameService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        public IActionResult OnGet()
+        public async Task<IActionResult> OnGet()
         {
-        ViewData["CategoryId"] = new SelectList(_context.GameCategories, "CategoryId", "CategoryName");
-        ViewData["DeveloperId"] = new SelectList(_context.Developers, "DeveloperId", "DeveloperName");
+        ViewData["CategoryId"] = new SelectList(await _service.GetGameCategoriesAsync(), "CategoryId", "CategoryName");
+        ViewData["DeveloperId"] = new SelectList(await _service.GetDevelopersAsync(), "DeveloperId", "DeveloperName");
             return Page();
         }
 
@@ -36,8 +37,7 @@ namespace GameManagement.Pages.Games
                 return Page();
             }
 
-            _context.Games.Add(Game);
-            await _context.SaveChangesAsync();
+            await _service.CreateGameAsync(Game);
 
             return RedirectToPage("./Index");
         }

@@ -7,16 +7,17 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Repository.Models;
+using Service;
 
 namespace GameManagement.Pages.Games
 {
     public class EditModel : PageModel
     {
-        private readonly Repository.Models.GameHubContext _context;
+        private readonly GameService _service;
 
-        public EditModel(Repository.Models.GameHubContext context)
+        public EditModel(GameService service)
         {
-            _context = context;
+            _service = service;
         }
 
         [BindProperty]
@@ -29,14 +30,14 @@ namespace GameManagement.Pages.Games
                 return NotFound();
             }
 
-            var game =  await _context.Games.FirstOrDefaultAsync(m => m.GameId == id);
+            var game = await _service.GetGameAsync(id.Value);
             if (game == null)
             {
                 return NotFound();
             }
             Game = game;
-           ViewData["CategoryId"] = new SelectList(_context.GameCategories, "CategoryId", "CategoryName");
-           ViewData["DeveloperId"] = new SelectList(_context.Developers, "DeveloperId", "DeveloperName");
+           ViewData["CategoryId"] = new SelectList(await _service.GetGameCategoriesAsync(), "CategoryId", "CategoryName");
+           ViewData["DeveloperId"] = new SelectList(await _service.GetDevelopersAsync(), "DeveloperId", "DeveloperName");
             return Page();
         }
 
@@ -49,15 +50,15 @@ namespace GameManagement.Pages.Games
                 return Page();
             }
 
-            _context.Attach(Game).State = EntityState.Modified;
+            //_context.Attach(Game).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _service.UpdateGameAsync(Game);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!GameExists(Game.GameId))
+                if (await _service.GetGameAsync(Game.GameId) == null)
                 {
                     return NotFound();
                 }
@@ -70,9 +71,9 @@ namespace GameManagement.Pages.Games
             return RedirectToPage("./Index");
         }
 
-        private bool GameExists(int id)
-        {
-            return _context.Games.Any(e => e.GameId == id);
-        }
+        //private bool GameExists(int id)
+        //{
+        //    return _context.Games.Any(e => e.GameId == id);
+        //}
     }
 }

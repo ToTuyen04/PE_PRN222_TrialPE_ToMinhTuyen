@@ -19,6 +19,8 @@ namespace GameManagement
             builder.Services.AddDbContext<GameHubContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddScoped<AccountRepository>();
+            builder.Services.AddScoped<GameRepository>();
+            builder.Services.AddScoped<GameService>();
             builder.Services.AddScoped<AccountService>();
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>

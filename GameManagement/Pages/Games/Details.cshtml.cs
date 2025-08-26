@@ -6,16 +6,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Repository.Models;
+using Service;
 
 namespace GameManagement.Pages.Games
 {
     public class DetailsModel : PageModel
     {
-        private readonly Repository.Models.GameHubContext _context;
+        private readonly GameService _service;
 
-        public DetailsModel(Repository.Models.GameHubContext context)
+        public DetailsModel(GameService service)
         {
-            _context = context;
+            _service = service;
         }
 
         public Game Game { get; set; } = default!;
@@ -27,7 +28,7 @@ namespace GameManagement.Pages.Games
                 return NotFound();
             }
 
-            var game = await _context.Games.FirstOrDefaultAsync(m => m.GameId == id);
+            var game = await _service.GetGameAsync(id.Value);
             if (game == null)
             {
                 return NotFound();

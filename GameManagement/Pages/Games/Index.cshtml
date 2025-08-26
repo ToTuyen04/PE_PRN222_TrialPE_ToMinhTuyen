@@ -10,6 +10,14 @@
 <p>
     <a asp-page="Create">Create New</a>
 </p>
+
+<form>
+    <label>Search: </label>
+    <input type="text" name="search1" value="@Model.Search1" placeholder="Price" />
+    <input type="text" name="search2" value="@Model.Search2" placeholder="Game Type Name" />
+    <input type="submit" value="Search" class="btn btn-primary" />
+</form>
+
 <table class="table">
     <thead>
         <tr>
@@ -64,3 +72,16 @@
 }
     </tbody>
 </table>
+
+<!-- Pagination -->
+<nav>
+    <ul class="pagination">
+        @for (int i = 1; i <= Model.TotalPage; i++)
+        {
+            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                <a class="page-link" asp-page="./index" asp-route-pagenumber="@i" asp-route-search1="@Model.Search1"
+                   asp-route-search2="@Model.Search2">@i</a>
+            </li>
+        }
+    </ul>
+</nav>

@@ -6,16 +6,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Repository.Models;
+using Service;
 
 namespace GameManagement.Pages.Games
 {
     public class DeleteModel : PageModel
     {
-        private readonly Repository.Models.GameHubContext _context;
+        private readonly GameService _service;
 
-        public DeleteModel(Repository.Models.GameHubContext context)
+        public DeleteModel(GameService service)
         {
-            _context = context;
+            _service = service;
         }
 
         [BindProperty]
@@ -28,7 +29,7 @@ namespace GameManagement.Pages.Games
                 return NotFound();
             }
 
-            var game = await _context.Games.FirstOrDefaultAsync(m => m.GameId == id);
+            var game = await _service.GetGameAsync(id.Value);
 
             if (game == null)
             {
@@ -48,12 +49,11 @@ namespace GameManagement.Pages.Games
                 return NotFound();
             }
 
-            var game = await _context.Games.FindAsync(id);
+            var game = await _service.GetGameAsync(id.Value);
             if (game != null)
             {
                 Game = game;
-                _context.Games.Remove(Game);
-                await _context.SaveChangesAsync();
+                await _service.DeleteAsync(Game);
             }
 
             return RedirectToPage("./Index");
