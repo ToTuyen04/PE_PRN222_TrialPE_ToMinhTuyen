@@ -1,0 +1,24 @@
+﻿@page
+@model LoginModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+@if(TempData["Message"] != null)
+{
+    <div>
+        @TempData["Message"]
+    </div>
+}
+
+<form method="post">
+    <div>
+        <label asp-for="Email"></label>
+        <input type="text" asp-for="Email" required />
+    </div>
+    <div>
+        <label asp-for="Password"></label>
+        <input type="text" asp-for="Password" required />
+    </div>
+    <button type="submit">Login</button>
+</form>

@@ -1,3 +1,9 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
+using Repository;
+using Repository.Models;
+using Service;
+
 namespace GameManagement
 {
     public class Program
@@ -6,11 +12,21 @@ namespace GameManagement
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            
             builder.Services.AddRazorPages();
+            builder.Services.AddSignalR();
 
+            builder.Services.AddDbContext<GameHubContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddScoped<AccountRepository>();
+            builder.Services.AddScoped<AccountService>();
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Login";
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+                });
             var app = builder.Build();
-
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
@@ -24,9 +40,14 @@ namespace GameManagement
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
-            app.MapRazorPages();
+            app.MapGet("/", () => Results.Redirect("/Login"));
+            app.MapRazorPages().RequireAuthorization();
+            //app.MapRazorPages();
+
+            //app.MapHub<SignalHub>("/lionHub");
 
             app.Run();
         }
